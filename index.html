@@ -1024,7 +1024,7 @@ $("#finBtn").onclick=()=>{
 };
 function surveyUrl(embed){
   const p=new URLSearchParams({src:SRC,seen:[...DEMO.seen].join(","),tasks:[...DEMO.done].join(",")||"none",sec:String(Math.round((Date.now()-DEMO.t0)/1000))});
-  if(embed){p.set("hideTitle","1");p.set("transparentBackground","1");p.set("alignLeft","1")}
+  if(embed){p.set("hideTitle","1");p.set("alignLeft","1")}
   return `https://tally.so/${embed?"embed":"r"}/${FORM}?`+p.toString();
 }
 function openSurvey(){
