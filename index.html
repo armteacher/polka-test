@@ -660,7 +660,7 @@ textarea.field{height:auto;padding:12px 14px;line-height:1.45}
 /* подсветка, палец, процесс */
 .coach{position:relative;z-index:6;box-shadow:0 0 0 3px var(--accent),0 0 0 9px color-mix(in srgb,var(--accent) 35%,transparent)!important;animation:coach 1.1s ease-in-out infinite}
 @keyframes coach{50%{box-shadow:0 0 0 3px var(--accent),0 0 0 15px color-mix(in srgb,var(--accent) 0%,transparent)!important}}
-.fing{position:absolute;left:50%;top:60%;width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.38);border:2px solid #fff;box-shadow:0 3px 10px rgba(0,0,0,.45);pointer-events:none;z-index:9;transition:left .55s ease,top .55s ease,transform .14s,opacity .3s;opacity:0}
+.fing{position:absolute;left:50%;top:60%;width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.38);border:2px solid #fff;box-shadow:0 3px 10px rgba(0,0,0,.45);pointer-events:none;z-index:9;transition:left .8s ease-in-out,top .8s ease-in-out,transform .14s,opacity .3s;opacity:0}
 .fing.on{opacity:1}.fing.tap{transform:scale(.62)}
 .mproc{position:absolute;inset:0;background:color-mix(in srgb,var(--bg) 90%,transparent);display:none;flex-direction:column;align-items:center;justify-content:center;gap:8px;z-index:8;text-align:center;backdrop-filter:blur(2px)}
 .mproc.on{display:flex}
@@ -1385,7 +1385,7 @@ const SC=[
  steps:[{s:()=>HOME(),tap:"#cPlus",hint:"Нажмите «+»"},
   {s:()=>HOME({pop:ATTPOP}),tap:"#atCam",hint:"Выберите «Камера»"},
   {s:()=>CAM(false),tap:"#shut",hint:"Записка в кадре. Нажмите на затвор"},
-  {s:()=>CAM(true),ms:1400,hint:"Мураш читает почерк…"},
+  {s:()=>CAM(true),ms:2200,hint:"Мураш читает почерк…"},
   {proc:["Распознаю почерк","Нахожу сроки","Оформляю задачи"]},
   {s:PHOTONOTE,end:true,hint:"Готово: записка стала задачами, фото прикреплено"}],
  raw:()=>`<div class="m-cam"><div class="vf">${PHOTO}</div></div>`,
@@ -1395,7 +1395,7 @@ const SC=[
  sit:"Лифт, метро, подвал, объект за городом: связи нет, а мысль нужно записать сейчас.",
  steps:[{s:()=>HOME({off:true}),type:{sel:"#cIn",text:T8},tap:"#cSend",hint:"Связи нет. Всё равно нажмите «Отправить»"},
   {s:()=>OFFLIST(false),tap:"#netOn",hint:"Запись сохранилась на телефоне. Связь появилась? Нажмите на плашку"},
-  {s:()=>OFFLIST(true),ms:700,hint:"Синхронизирую…"},
+  {s:()=>OFFLIST(true),ms:1400,hint:"Синхронизирую…"},
   {proc:["Отправляю на сервер в зашифрованном виде","Раскладываю по полочкам"]},
   {s:CATNOTE,end:true,hint:"Готово: запись разобрана, как только появилась сеть"}],
  raw:()=>OFFLIST(false),
@@ -1424,18 +1424,20 @@ async function play(s,mode){
     if(!alive())return;
     if(st.s){scr.innerHTML=st.s();mp.classList.remove("on")}
     if(st.tap)n++;
-    if(st.type){setCap(mode,st.typingHint||"Набираем пример…",n,tapSteps);const el=scr.querySelector(st.type.sel),tm=st.type.timer?scr.querySelector(st.type.timer):null,txt=st.type.text,sp=mode==="demo"?7:5;el.classList.add("typing");
-      for(let i=0;i<=txt.length;i+=sp){if(!alive())return;el.textContent=txt.slice(0,i);if(tm)tm.textContent=fmt(Math.round(47*i/txt.length));el.scrollTop=1e5;await sleep(18)}
-      el.textContent=txt;if(tm)tm.textContent="0:47";el.classList.remove("typing")}
+    if(st.type){const el=scr.querySelector(st.type.sel),tm=st.type.timer?scr.querySelector(st.type.timer):null,txt=st.type.text,dl=tm?22:36;let fast=false;
+      setCap(mode,(st.typingHint||"Набираем пример…")+(mode==="live"?" <small style=\"opacity:.7\">(нажмите на экран, чтобы ускорить)</small>":""),n,tapSteps);
+      const ph=$("#ph");if(mode==="live")ph.onclick=()=>{fast=true};el.classList.add("typing");
+      for(let i=0;i<=txt.length;i++){if(!alive())return;if(fast)break;el.textContent=txt.slice(0,i);if(tm)tm.textContent=fmt(Math.round(47*i/txt.length));if(i%6===0)el.scrollTop=1e5;await sleep(dl)}
+      ph.onclick=null;el.textContent=txt;el.scrollTop=1e5;if(tm)tm.textContent="0:47";el.classList.remove("typing");await sleep(mode==="demo"?900:300)}
     if(st.hint)setCap(mode,st.hint,n,tapSteps);
     if(st.proc){mp.innerHTML=`${CARRY}<b>Мураш несёт на полочку…</b><ol>${st.proc.map(x=>`<li>${x}</li>`).join("")}</ol>`;mp.classList.add("on");setCap(mode,"Мураш работает…",n,tapSteps);
-      const LI=mp.querySelectorAll("li");for(const li of LI){if(!alive())return;li.className="on";await sleep(mode==="demo"?480:700);li.className="ok"}await sleep(250);continue}
+      const LI=mp.querySelectorAll("li");for(const li of LI){if(!alive())return;li.className="on";await sleep(950);li.className="ok"}await sleep(500);continue}
     if(st.ms)await sleep(st.ms);
     if(st.tap){const t=scr.querySelector(st.tap);if(!t)continue;
-      if(mode==="demo"){await sleep(600);if(!alive())return;reveal(t);const r=t.getBoundingClientRect(),p=$("#ph").getBoundingClientRect();fing.style.left=(r.left-p.left+r.width/2-18)+"px";fing.style.top=(r.top-p.top+r.height/2-18)+"px";fing.classList.add("on");await sleep(700);if(!alive())return;fing.classList.add("tap");t.classList.add("coach");await sleep(200);fing.classList.remove("tap");await sleep(260);t.classList.remove("coach")}
+      if(mode==="demo"){await sleep(1500);if(!alive())return;reveal(t);const r=t.getBoundingClientRect(),p=$("#ph").getBoundingClientRect();fing.style.left=(r.left-p.left+r.width/2-18)+"px";fing.style.top=(r.top-p.top+r.height/2-18)+"px";fing.classList.add("on");await sleep(1000);if(!alive())return;fing.classList.add("tap");t.classList.add("coach");await sleep(260);fing.classList.remove("tap");await sleep(600);t.classList.remove("coach")}
       else{reveal(t);t.classList.add("coach");await new Promise(res=>{t.onclick=e=>{e.stopPropagation();res()}});t.onclick=null;t.classList.remove("coach");if(!alive())return}}
-    if(st.end){if(mode==="demo"){await sleep(2200);if(!alive())return;return play(s,"demo")}
-      await sleep(700);if(!alive())return;ST.phase="result";ST.view="after";DEMO.done.add(s.id);s.after&&s.after();renderScn();$("#scnB").scrollTop=0;return}
+    if(st.end){if(mode==="demo"){await sleep(5000);if(!alive())return;return play(s,"demo")}
+      await sleep(1600);if(!alive())return;ST.phase="result";ST.view="after";DEMO.done.add(s.id);s.after&&s.after();renderScn();$("#scnB").scrollTop=0;return}
   }
 }
 function reveal(t){const sp=t.closest(".m-body,.ms-chat");if(!sp)return;const tr=t.getBoundingClientRect(),pr=sp.getBoundingClientRect();if(tr.bottom>pr.bottom-6||tr.top<pr.top)sp.scrollTop+=tr.bottom-pr.bottom+24}
