@@ -888,12 +888,12 @@ function go(v,id){
 
 /* ---------- plans ---------- */
 const PLANS=[
-  {id:"free",name:"Бесплатно",m:0,y:0,sub:"Навсегда",feats:["Заметки, напоминания и проекты без ограничений","Работа без интернета и синхронизация","Шифрование заметок","Боты и мини-приложения в Telegram и Max","10 ИИ-записей в месяц"],no:["Голос через ИИ","Фото через ИИ"]},
-  {id:"lite",name:"Лайт",m:199,y:1990,sub:"ИИ понемногу, без интернета - как обычно",feats:["100 ИИ-записей в месяц","20 минут голоса, до 2 мин за раз","10 фото через ИИ","Яндекс Календарь"]},
-  {id:"start",name:"Старт",m:449,y:3990,sub:"Для заметок и задач каждый день",feats:["200 ИИ-записей в месяц","30 минут голоса, до 3 мин за раз","15 фото через ИИ","Напоминания с местом и кнопкой маршрута"]},
-  {id:"opt",name:"Оптимальный",m:699,y:5990,sub:"Для длинных ТЗ голосом и работы",tag:"Выбор большинства",feats:["500 ИИ-записей в месяц","120 минут голоса, до 15 мин за раз","50 фото через ИИ","План дня: «пора выезжать», умное время, порядок поездок","Разбор недели и советы от Мураша"]}
+  {id:"free",name:"Бесплатно",m:0,y:0,sub:"Навсегда",feats:["Заметки, напоминания и проекты без ограничений","Работа без интернета и синхронизация","Шифрование заметок","Боты и мини-приложения в Telegram и Max","Разбор Мурашом: 5 в месяц"],no:["Голос через ИИ","Фото через ИИ"]},
+  {id:"lite",name:"Лайт",m:149,y:1490,sub:"ИИ понемногу, без интернета - как обычно",feats:["80 разборов Мурашом в месяц","15 минут голоса, до 2 мин за раз","5 фото через ИИ","Яндекс Календарь"]},
+  {id:"start",name:"Старт",m:349,y:3490,sub:"Для заметок и задач каждый день",feats:["200 разборов Мурашом в месяц","30 минут голоса, до 3 мин за раз","15 фото через ИИ","Напоминания с местом и кнопкой маршрута"]},
+  {id:"opt",name:"Оптимальный",m:549,y:5490,sub:"Для длинных ТЗ голосом и работы",tag:"Выбор большинства",feats:["400 разборов Мурашом в месяц","90 минут голоса, до 15 мин за раз","40 фото через ИИ","План дня: «пора выезжать», умное время, порядок поездок","Разбор недели и советы от Мураша"]}
 ];
-const LIM={trial:[["ИИ-записи",8,30],["Голос, мин",4,10],["Фото через ИИ",1,5]],free:[["ИИ-записи",3,10]],ended:[["ИИ-записи",3,10]],lite:[["ИИ-записи",41,100],["Голос, мин",6,20],["Фото через ИИ",1,10]],start:[["ИИ-записи",64,200],["Голос, мин",11,30],["Фото через ИИ",2,15]],opt:[["ИИ-записи",137,500],["Голос, мин",41,120],["Фото через ИИ",9,50]]};
+const LIM={trial:[["ИИ-записи",8,30],["Голос, мин",4,10],["Фото через ИИ",1,5]],free:[["ИИ-записи",2,5]],ended:[["ИИ-записи",2,5]],lite:[["ИИ-записи",33,80],["Голос, мин",5,15],["Фото через ИИ",1,5]],start:[["ИИ-записи",64,200],["Голос, мин",11,30],["Фото через ИИ",2,15]],opt:[["ИИ-записи",137,400],["Голос, мин",31,90],["Фото через ИИ",9,40]]};
 const rub=n=>n.toLocaleString("ru-RU")+" ₽";
 S.plan="trial";S.pick="opt";S.period="m";S.paidPeriod="m";
 function priceOf(p,per){return per==="m"?p.m:p.y}
@@ -906,7 +906,7 @@ function renderPlans(){
     ${S.plan==="ended"?`<div class="wall"><div class="hello" style="padding:0"><div class="mark"><svg class="mur" viewBox="0 0 64 64" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"><path d="M26 22C24 15 19 11 14 11"/><path d="M38 22C40 15 45 11 50 11"/></g><circle cx="14" cy="11" r="3.6" fill="currentColor"/><circle cx="50" cy="11" r="3.6" fill="currentColor"/><ellipse cx="32" cy="34" rx="17" ry="15" fill="currentColor"/><circle cx="25.5" cy="34" r="3.4" fill="var(--eye)"/><circle cx="38.5" cy="34" r="3.4" fill="var(--eye)"/><rect x="8" y="53" width="48" height="4.6" rx="2.3" fill="currentColor"/></svg></div></div><h2>Пробные 7 дней закончились</h2><p>Заметки и напоминания остаются с вами. Чтобы ИИ и дальше раскладывал всё по полочкам, выберите тариф.</p></div>`:""}
     <div class="card"><div class="meta" style="margin-bottom:10px"><b style="color:var(--ink);font-size:15px">${status}</b></div>
       <div class="usage">${LIM[S.plan].map(([n,a,b])=>`<div class="u"><div>${n}<span>${a} из ${b}</span></div><div class="bar" style="margin:6px 0 0"><i class="${a/b>.8?"warn":""}" style="width:${Math.round(a/b*100)}%"></i></div></div>`).join("")}</div>
-      <div class="meta" style="margin-top:8px">Лимиты обновляются 1-го числа · <button style="color:var(--accent);font-size:13px" id="addpack">+100 записей за 99 ₽</button></div></div>
+      <div class="meta" style="margin-top:8px">Лимиты обновляются 1-го числа · <button style="color:var(--accent);font-size:13px" id="addpack">+50 разборов за 59 ₽</button></div></div>
     ${paid?`<div class="card"><b>Оплата</b><div class="meta" style="margin:6px 0 12px">Карта •• 4417 · автопродление включено · следующее списание ${S.paidPeriod==="y"?"16 ноября 2027, "+rub(cur.y):"16 декабря, "+rub(cur.m)}</div><div style="display:flex;gap:8px"><button class="btn" id="chg" style="flex:1">${S.plan!=="opt"?"Перейти на Оптимальный":"Сменить тариф"}</button><button class="btn dang" id="cnl" style="flex:1">Отменить</button></div></div>`
     :`<div class="grp" style="margin-top:20px">Тарифы
       <span class="seg" style="margin-left:auto;text-transform:none;letter-spacing:0"><button class="${!yr?"sel":""}" data-per="m">Месяц</button><button class="${yr?"sel":""}" data-per="y">Год до −29%</button></span></div>
@@ -914,7 +914,7 @@ function renderPlans(){
     ${PLANS.map(p=>{const pr=priceOf(p,S.period);const permo=p.y?Math.round(p.y/12):0;
       return `<button class="plan ${S.pick===p.id?"sel":""}" data-pick="${p.id}">${p.tag?`<span class="tag">${p.tag}</span>`:""}
       <div class="ph"><span class="pn">${p.name}</span><span class="pp">${pr?rub(pr):"0 ₽"}<small>${pr?(yr?"/год":"/мес"):""}</small></span></div>
-      <div class="sub2">${yr&&p.y?`≈ ${rub(permo)} в месяц вместо ${rub(p.m)}`:(p.m?`Первый месяц ${rub(Math.floor(p.m/2))}, дальше ${rub(p.m)} · `:"")+p.sub}</div>
+      <div class="sub2">${yr&&p.y?`≈ ${rub(permo)} в месяц вместо ${rub(p.m)}`:(p.m?`Первый месяц ${rub(Math.ceil(p.m/2))}, дальше ${rub(p.m)} · `:"")+p.sub}</div>
       <ul>${p.feats.map(f=>`<li>${f}</li>`).join("")}${(p.no||[]).map(f=>`<li class="no">${f}</li>`).join("")}</ul></button>`}).join("")}
     <button class="card" id="code" style="text-align:center;color:var(--accent);font-weight:600">У меня есть код доступа</button>
     <div class="paybar"><button class="btn pri" id="buy">${S.pick==="free"?"Остаться на бесплатном":yr?"Оформить за "+rub(priceOf(PLANS.find(p=>p.id===S.pick),"y"))+" в год":"Оформить: первый месяц "+rub(Math.floor(PLANS.find(p=>p.id===S.pick).m/2))}</button>
@@ -922,7 +922,7 @@ function renderPlans(){
   const V=$("#v-plans");
   V.querySelectorAll("[data-pick]").forEach(b=>b.onclick=()=>{S.pick=b.dataset.pick;renderPlans()});
   V.querySelectorAll("[data-per]").forEach(b=>b.onclick=()=>{S.period=b.dataset.per;renderPlans()});
-  $("#addpack").onclick=()=>toast("Пакет +100 ИИ-записей до конца месяца - 99 ₽");
+  $("#addpack").onclick=()=>toast("Пакет +50 разборов до конца месяца - 59 ₽");
   const code=$("#code");if(code)code.onclick=()=>{openSheet(`<h3>Код доступа</h3><p style="color:var(--muted);font-size:14px;margin:-4px 0 12px">Код с Авито, в подарок или от блогера.</p><input class="field" id="cd" placeholder="Например, POLKA-7Q2M-K9XD" style="text-transform:uppercase"><button class="btn pri" id="cdS" style="width:100%">Активировать</button>`);
     $("#cdS").onclick=()=>{closeSheet();S.plan="opt";S.paidPeriod="m";updPlanTags();renderPlans();toast("Код активирован: Оптимальный на 1 месяц")}};
   const buy=$("#buy");if(buy)buy.onclick=()=>{
@@ -1362,6 +1362,7 @@ const SC=[
  after(){addNote(2,"День рождения Лёши","**Когда:** суббота, 15:00\n- [ ] Перевести Ане 500 ₽ на подарок\n- [ ] Подписать открытку",T4,"Telegram · от Аня");addRem(2,"Перевести Ане 500 ₽","Подарок Лёше","чт, 10:00","next")}},
 {id:"remind",em:"⏰",title:"Напоминание одной фразой",stat:"1 фраза → дата, время, место и дорога",
  sit:"Ставить напоминание обычно долго: дата, время, место в разных полях. Хочется просто сказать как есть.",
+ tz:"Время на дорогу Мураш считает с учётом пробок: от вашей геопозиции, если вы разрешили доступ, или от адресов дома и работы из настроек.",
  steps:[{s:()=>HOME(),tap:"#cMode",hint:"Переключите режим: нажмите «Заметка ▾»"},
   {s:()=>HOME({pop:MODEPOP}),tap:"#pRem",hint:"Выберите «Напоминание»"},
   {s:()=>HOME({rem:true}),type:{sel:"#cIn",text:T5},tap:"#cSend",hint:"Нажмите «Отправить»"},
@@ -1393,6 +1394,7 @@ const SC=[
  after(){addNote(2,"Отпуск","- [ ] Купить билеты до 1 декабря\n- [ ] Узнать, нужна ли виза\n- [ ] Договориться с мамой насчёт собаки\n- [ ] Оформить страховку","(фото записки)","Фото")}},
 {id:"offline",em:"📶",title:"Без интернета",stat:"Без сети ничего не потерялось",
  sit:"Лифт, метро, подвал, объект за городом: связи нет, а мысль нужно записать сейчас.",
+ tz:"Без интернета запись сразу сохраняется на телефоне. Мураш (ИИ) работает через интернет, поэтому разбирает её по полочкам, как только появится сеть.",
  steps:[{s:()=>HOME({off:true}),type:{sel:"#cIn",text:T8},tap:"#cSend",hint:"Связи нет. Всё равно нажмите «Отправить»"},
   {s:()=>OFFLIST(false),tap:"#netOn",hint:"Запись сохранилась на телефоне. Связь появилась? Нажмите на плашку"},
   {s:()=>OFFLIST(true),ms:1400,hint:"Синхронизирую…"},
@@ -1487,7 +1489,7 @@ function renderFinal(){
   const n=DEMO.done.size,up=Object.values(DEMO.votes).filter(x=>x==="+").length;
   $("#scnB").innerHTML=`<div class="fin"><div class="big" style="width:64px;height:64px;border-radius:18px;background:var(--ink);color:var(--bg);display:grid;place-items:center;--eye:var(--ink)">${MUR}</div><h2>Вот что умеет Мураш</h2><p style="color:var(--muted);margin:0 auto 14px;max-width:32ch">Вы посмотрели ${n} из ${SC.length} сценариев${up?`, полезными отметили ${up}`:""}. Осталось ответить на пару вопросов, это 2-3 минуты.</p></div>
    <div class="menuS">${SC.map((s,k)=>`<button data-go-s="${k}"><span class="e">${s.em}</span><span>${s.title}</span>${DEMO.votes[s.id]==="+"?'<span class="st">👍</span>':DEMO.votes[s.id]==="-"?'<span class="st" style="color:var(--muted)">👎</span>':DEMO.done.has(s.id)?'<span class="st">✓</span>':""}</button>`).join("")}</div>
-   <div class="hint" style="margin-top:12px">👀 Можно походить по интерфейсу приложения: заметки, напоминания, план дня, подписка, подключения. Результаты сценариев уже лежат там. Новые записи в демо Мураш не раскладывает: ИИ здесь нет.</div>`;
+   <div class="hint" style="margin-top:12px">👀 Можно походить по интерфейсу приложения: заметки, напоминания, план дня, подписка, подключения. Результаты сценариев уже лежат там. Новые записи в демо Мураш не раскладывает: ИИ здесь нет.</div><div class="hint" style="margin-top:8px">💾 Все заметки в любой момент можно выгрузить себе одним архивом (Markdown и JSON) и сделать бэкап на свой Яндекс Диск, даже на бесплатном тарифе.</div>`;
   $("#scnF").innerHTML=`<button class="btn" id="fApp">👀 Интерфейс</button><button class="btn pri" id="fQ">К вопросам →</button>`;
   $("#scnB").querySelectorAll("[data-go-s]").forEach(b=>b.onclick=()=>goScn(+b.dataset.goS));
   $("#fApp").onclick=openSandbox;$("#fQ").onclick=()=>openSurvey();
