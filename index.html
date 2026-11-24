@@ -697,7 +697,7 @@ textarea.field{height:auto;padding:12px 14px;line-height:1.45}
       <h2>О чём думаете?</h2>
       <p>Скажи как есть - Мураш разложит по полочкам.</p>
       <button class="trial" data-go="plans" id="trialPill">Пробный период · <b>5 дней</b> · ИИ 8 из 30</button>
-      <button class="today" data-go="plan"><span class="ic">🚗</span><span class="grow"><b class="go">12:20 пора выезжать</b> в МФЦ на Республики<small>25 мин с пробками · план дня</small></span>›</button>
+      <button class="today" data-go="plan"><span class="ic">🚗</span><span class="grow"><b class="go">12:20 пора выезжать</b> в МФЦ на Республики<small>на дорогу 25 мин · план дня</small></span>›</button>
     </div>
     <div id="procBox"></div>
     <div class="recent" id="recent"></div>
@@ -1148,7 +1148,7 @@ const CONN=[
  {id:"ics",ic:"🔗",name:"Календарь iPhone",gets:"Секретная ссылка-подписка: дела из Полочек появятся в любом календаре. Ссылку можно перевыпустить",how:"link",tariff:"Лайт"},
  {id:"ydisk",ic:"🗂",name:"Яндекс Диск",gets:"Зашифрованный бэкап раз в неделю. Прочитать его можно только с твоим кодом восстановления",how:"oauth",facts:[["Что уходит","Зашифрованный архив заметок раз в неделю"],["Кто прочитает","Только ты, с кодом восстановления. Яндекс видит файл, но не текст"],["Доступ","Только папка «Приложения / Полочки» на твоём Диске"],["Отключить","Здесь кнопкой «Отключить» или в Яндекс ID"]]},
  {g:"Дорога"},
- {id:"routes",ic:"🛣",name:"Маршруты",gets:"Считаем дорогу на своём сервере по картам OpenStreetMap. Уходят только координаты, без текста дел",how:"built",tariff:"Старт"},
+ {id:"routes",ic:"🛣",name:"Расчёт дороги (позже)",gets:"Отложено: API карт платный. Сейчас время на дорогу ставите вы, маршрут с пробками открывается ссылкой",how:"built",tariff:"Старт"},
  {id:"nav",ic:"🧭",name:"Открывать маршрут в",gets:"Ссылка с живыми пробками. Ничего не уходит, пока ты сам не нажмёшь",how:"nav",tariff:"Старт"},
  {g:"Работа · скоро"},
  {id:"b24",ic:"🏢",name:"Битрикс24",gets:"Задача или дело в CRM из заметки одной кнопкой",how:"soon",tariff:"Оптимальный"},
@@ -1172,7 +1172,7 @@ function renderConn(){
     const tag=x.tariff?`<span class="soon">${x.tariff}${x.tariff==="Оптимальный"?"":"+"}</span>`:"";
     html+=`<div class="conn"><span class="ci" aria-hidden="true">${x.ic}</span><div class="grow"><b>${x.name}${tag}</b>${x.how==="nav"?"":st}<small>${x.gets}</small>${x.how==="nav"?st:""}</div>${btn}</div>`;
   }
-  html+=`</div><p class="osm">Все подключения - российские сервисы, кроме Telegram. Данные карт © участники OpenStreetMap.</p>`;
+  html+=`</div><p class="osm">Все подключения - российские сервисы, кроме Telegram.</p>`;
   const v=$("#v-conn");v.innerHTML=html;
   v.querySelectorAll("[data-on]").forEach(b=>b.onclick=()=>connSheet(b.dataset.on));
   v.querySelectorAll("[data-off]").forEach(b=>b.onclick=()=>{const x=CONN.find(k=>k.id===b.dataset.off);openSheet(`<h3>Отключить ${x.name}?</h3><p style="color:var(--muted);font-size:14px;margin:-4px 0 12px">Удалим доступ и больше ничего туда не отправим. Уже отправленное останется у ${x.name.includes("Диск")?"тебя на Диске":"тебя в календаре"}.</p><button class="btn dang" style="width:100%" id="offGo">Отключить</button>`);$("#offGo").onclick=()=>{S.conn[x.id]="off";closeSheet();toast(x.name+": отключено");renderConn()}});
@@ -1252,7 +1252,7 @@ function renderPlan(){
       <div class="ti"><div class="card" style="border-style:dashed"><span class="tm" style="color:var(--muted)">без времени</span>Съездить в налоговую<div class="src">Мураш предлагает: ${S.planDone?"<b>15:10</b>, по пути домой, без пробок":"нажми «Разложить день»"}</div></div></div>
     </div>
     <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn pri" id="layDay" style="flex:1">Как Мураш раскладывает день</button><a class="btn" style="flex:1;text-align:center;display:grid;place-items:center" href="${rt}" target="_blank" rel="noopener" id="rtLink">Весь маршрут в Яндекс Картах</a></div>
-    <p class="osm">Дорога считается по картам © участники OpenStreetMap, с запасом на час пик</p>
+    <p class="osm">Время на дорогу вы ставите сами; пробки - в Яндекс Картах по кнопке</p>
     <div class="card tip" style="margin-top:12px"><div class="mark">${document.querySelector(".dhead .mark").innerHTML}</div><div><b>Совет недели от Мураша</b><div class="meta" style="margin-top:4px;display:block">На этой неделе ты дважды опоздал между встречами в разных районах. Закладывай 30 минут, а не 15 - я уже учитываю это в плане.</div></div></div>`;
   $("#rtLink").onclick=()=>toast("Откроются Яндекс Карты с маршрутом и пробками");
   $("#fixDay").onclick=()=>{S.planDone=true;done("plan");renderPlan();toast("Встреча перенесена на 13:45 в Яндекс Календаре")};
@@ -1318,8 +1318,8 @@ const MS_ANYA=(menu)=>`<div class="ms"><div class="ms-top"><span class="m-ic">�
 const MS_PICK=()=>`<div class="ms"><div class="ms-top"><span class="m-ic">✕</span><span style="flex:1">Переслать в…</span></div>${[["⭐","Избранное","#f9a825"],["🐜","Полочки · бот",""],["М","Мама","#c2185b"],["Р","Работа · отдел","#00897b"]].map(c=>`<div class="ms-it" ${c[1].startsWith("Полочки")?'id="msBot"':""}><span class="ms-av ${c[2]?"":"mur"}" style="${c[2]?`background:${c[2]}`:""}">${c[2]?c[0]:MUR}</span><span class="tx"><b>${c[1]}</b><span>${c[1].startsWith("Полочки")?"бот: заметки и напоминания":""}</span></span></div>`).join("")}</div>`;
 const MS_BOT=(st)=>`<div class="ms"><div class="ms-top"><span class="m-ic">‹</span><span class="ms-av mur" style="width:30px;height:30px">${MUR}</span><span style="flex:1">Полочки<small>бот</small></span></div><div class="ms-chat" id="msC"><div class="ms-b me"><span class="fw">Переслано от Аня</span>${T4}<span class="tm">12:42</span></div><div class="ms-b">Принял ✓ Куда положить?<span class="tm">12:42</span></div><div class="ms-kb">${["Работа","Дом","Учёба","Свободные"].map(x=>`<span ${x==="Дом"?'id="bDom"':""} class="${st>0&&x!=="Дом"?"off":""}">${x}</span>`).join("")}</div>${st>0?`<div class="ms-b me">Дом<span class="tm">12:42</span></div><div class="ms-b">Положил в «Дом» ✓<br>Нашёл сроки:<br>• перевести 500 ₽ - <b>до четверга</b><br>• день рождения - <b>суббота, 15:00</b><br>Напомнить в чт в 10:00?<span class="tm">12:42</span></div><div class="ms-kb"><span id="bYes" class="${st>1?"off":""}">Да, напомни</span><span class="${st>1?"off":""}">Не надо</span></div>`:""}${st>1?`<div class="ms-b me">Да, напомни<span class="tm">12:43</span></div><div class="ms-b">Готово ⏰ Напомню в чт в 10:00, а в пятницу вечером - про день рождения.<span class="tm">12:43</span></div><div class="ms-kb"><span id="bOpen">Открыть в Полочках</span></div>`:""}</div><div class="ms-in">Сообщение</div></div>`;
 const BOTNOTE=()=>NOTEV({title:"День рождения Лёши",p:2,src:"Telegram · от Аня",body:`<p style="margin:0"><b>Когда:</b> суббота, 15:00</p><ul class="m-ul">${L("Перевести Ане 500 ₽ на подарок")}${L("Подписать открытку")}</ul>${MR("Чт 10:00","перевести Ане 500 ₽")}${MR("Пт 19:00","завтра у Лёши день рождения")}`});
-const PARSE=()=>`${TOP("Напоминание","‹","")}<div class="m-body"><div class="m-on" style="margin:0">✓ Напоминание создано</div><div class="m-parse"><div><span>Что</span><span>Забрать посылку</span></div><div><span>Когда</span><span>Пятница, 18:30<small>«после работы»: работа до 18:00 (из настроек) + запас</small></span></div><div><span>Где</span><span>Пункт выдачи, ул. Республики</span></div><div><span>Дорога</span><span>20 мин с пробками<small>напомню в 18:10, когда пора выезжать</small></span></div></div><span class="m-btn" id="pOk">Готово</span></div>`;
-const LOCK=()=>`<div class="m-lock"><div class="d">пятница, 21 ноября</div><div class="tm">18:10</div><div class="nt"><div class="ap"><i>${MUR}</i>ПОЛОЧКИ · сейчас</div><b>Пора выезжать за посылкой</b><div>20 мин с пробками до пункта выдачи на Республики</div><div class="bt"><span>Маршрут</span><span>Через 10 мин</span><span>Готово</span></div></div></div>`;
+const PARSE=()=>`${TOP("Напоминание","‹","")}<div class="m-body"><div class="m-on" style="margin:0">✓ Напоминание создано</div><div class="m-parse"><div><span>Что</span><span>Забрать посылку</span></div><div><span>Когда</span><span>Пятница, 18:30<small>«после работы»: работа до 18:00 (из настроек) + запас</small></span></div><div><span>Где</span><span>Пункт выдачи, ул. Республики</span></div><div><span>Дорога</span><span>20 мин на дорогу<small>напомню в 18:10, когда пора выезжать</small></span></div></div><span class="m-btn" id="pOk">Готово</span></div>`;
+const LOCK=()=>`<div class="m-lock"><div class="d">пятница, 21 ноября</div><div class="tm">18:10</div><div class="nt"><div class="ap"><i>${MUR}</i>ПОЛОЧКИ · сейчас</div><b>Пора выезжать за посылкой</b><div>20 мин на дорогу до пункта выдачи на Республики</div><div class="bt"><span>Маршрут</span><span>Через 10 мин</span><span>Готово</span></div></div></div>`;
 const PLANIN=()=>`${TOP("План дня · пятница")}<div class="m-body"><div class="m-grp"><b>Календарь</b><div>09:30 Планёрка <small>· офис</small></div><div>13:30 Встреча с поставщиком <small>· другой конец города</small></div></div><div class="m-grp"><b>Дела без времени</b><div>Забрать документы в МФЦ <small>· до 13:00</small></div><div>Съездить в налоговую <small>· до 18:00</small></div><div>Позвонить клиенту</div></div><span class="m-btn" id="pLay">🗓 Разложить день</span></div>`;
 const TL=(fix)=>`${TOP("План дня · пятница")}<div class="m-body"><div class="m-tl"><div class="it"><span class="tm">09:30</span>Планёрка<small>календарь · офис</small></div><div class="it"><span class="tm">10:00</span>Позвонить клиенту<small>окно 2 часа, звонок 10 минут</small></div><div class="it road">🚗 25 мин · <span class="go">выехать в 12:20</span></div><div class="it"><span class="tm">12:45</span>МФЦ, документы<small>успеваете до 13:00</small></div><div class="it road">🚗 35 мин до встречи</div><div class="it ${fix?"ok":"warn"}"><span class="tm">${fix?"13:45":"13:30"}</span>Встреча с поставщиком${fix?"<small>перенесена в календаре ✓</small>":'<small>⚠️ не успеваете: дорога 35 мин, а окно 20</small><span class="m-btn" id="fixMeet" style="margin-top:6px;padding:7px">Перенести на 13:45</span>'}</div><div class="it road">🚗 15 мин, по пути домой</div><div class="it"><span class="tm">15:10</span>Налоговая<small>после обеда очередь меньше</small></div></div></div>`;
 const CAM=(scan)=>`<div class="m-cam"><div class="vf">${PHOTO}<div class="crn"></div>${scan?'<div class="scan"></div>':""}</div><div class="bar"><span class="sht" id="shut"></span></div></div>`;
@@ -1377,16 +1377,16 @@ const SC=[
  steps:[{s:()=>HOME(),tap:"#cMode",hint:"Переключите режим: нажмите «Заметка ▾»"},
   {s:()=>HOME({pop:MODEPOP}),tap:"#pRem",hint:"Выберите «Напоминание»"},
   {s:()=>HOME({rem:true}),type:{sel:"#cIn",text:T5},tap:"#cSend",hint:"Нажмите «Отправить»"},
-  {proc:["Понимаю «в пятницу после работы»","Нахожу место","Считаю дорогу с пробками"]},
+  {proc:["Понимаю «в пятницу после работы»","Нахожу место","Ставлю время на дорогу"]},
   {s:PARSE,tap:"#pOk",hint:"Мураш понял фразу целиком. Нажмите «Готово»"},
   {s:LOCK,end:true,hint:"А так в пятницу в 18:10 придёт уведомление"}],
  raw:()=>RAW("Было",rawNote("Будильник · пт 18:00","Обычный будильник: без места, дороги и «пора выезжать»")),
- what:["Понял «после работы» по вашему графику: 18:30, а не 18:00","Нашёл место и посчитал дорогу с пробками","Напомнит в 18:10, когда пора выезжать, с кнопкой маршрута"],
+ what:["Понял «после работы» по вашему графику: 18:30, а не 18:00","Нашёл место и время на дорогу, маршрут с пробками - по кнопке в Яндекс Картах","Напомнит в 18:10, когда пора выезжать, с кнопкой маршрута"],
  after(){addRem(null,"Забрать посылку","Пункт выдачи, ул. Республики · выехать в 18:10","пт, 18:30","next")}},
 {id:"plan",em:"🗓",title:"План дня с дорогой",stat:"5 дел → план дня, время выезда и 1 накладка",
  sit:"Встречи в календаре, дела в голове. А сколько ехать между ними и где накладка, никто не считает.",
  steps:[{s:PLANIN,tap:"#pLay",hint:"Встречи и дела на пятницу. Нажмите «Разложить день»"},
-  {proc:["Смотрю окна между встречами","Считаю дорогу с пробками","Нахожу накладки"]},
+  {proc:["Смотрю окна между встречами","Ставлю время на дорогу","Нахожу накладки"]},
   {s:()=>TL(false),tap:"#fixMeet",hint:"Мураш нашёл накладку. Нажмите «Перенести на 13:45»"},
   {s:()=>TL(true),end:true,hint:"Готово: день разложен, накладки нет"}],
  raw:PLANIN,
