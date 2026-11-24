@@ -1195,6 +1195,9 @@ function renderSettings(){
     <div class="setrow"><div class="grow">Тема</div><div class="seg">${[["auto","Авто"],["light","Светлая"],["dark","Тёмная"]].map(([k,v])=>`<button class="${th===k?'sel':''}" data-th="${k}">${v}</button>`).join("")}</div></div>
     <div class="setrow"><div class="grow">Тариф<small>Пробный период, 5 дней</small></div><button class="btn" style="height:32px" data-go="plans">Подписка</button></div>
     <div class="setrow"><div class="grow">Подключения<small>Telegram, Max, Яндекс Календарь, Диск, навигатор · подключено ${connCount()}</small></div><button class="btn" style="height:32px" data-go="conn">Открыть</button></div>
+    <div class="setrow"><div class="grow">Аккаунт<small>Вход: Яндекс ID · +7 9•• •••-••-12</small></div><button class="btn" style="height:32px" id="accBtn">Способы входа</button></div>
+    <div class="setrow"><div class="grow">Выгрузить все заметки<small>Markdown и JSON одним архивом</small></div><button class="btn" style="height:32px" id="expBtn">Выгрузить</button></div>
+    <div class="setrow"><div class="grow" style="color:var(--danger)">Удалить аккаунт<small>Все данные стираются не позже 30 дней</small></div><button class="btn" style="height:32px;color:var(--danger)" id="delBtn">Удалить</button></div>
   </div>
   <div class="grp">План дня</div>
   <div class="card">
@@ -1535,6 +1538,12 @@ function closeSheet(){$("#sheet").classList.remove("on");$("#sscrim").classList.
 $("#sscrim").onclick=closeSheet;
 
 go("home");
+
+document.addEventListener("click",e=>{const t=e.target.closest("button");if(!t)return;
+  if(t.id==="accBtn")openSheet(`<h3>Способы входа</h3><p style="color:var(--muted);font-size:14px">По закону (406-ФЗ) вход только через российские сервисы: Яндекс ID, VK ID (в том числе Max), номер телефона +7. Google, Apple, Telegram и иностранная почта не используются.</p><div class="setrow"><div class="grow">Яндекс ID<small>основной</small></div><b style="color:var(--ok)">✓</b></div><div class="setrow"><div class="grow">Телефон +7</div><b style="color:var(--ok)">✓</b></div><div class="setrow"><div class="grow">VK ID / Max</div><button class="btn" style="height:32px">Привязать</button></div>`);
+  if(t.id==="expBtn")toast("Архив с заметками готовится: расшифровка на этом устройстве");
+  if(t.id==="delBtn"){openSheet(`<h3 style="color:var(--danger)">Удалить аккаунт?</h3><p style="color:var(--muted);font-size:14px;margin-top:-4px">Удалятся все заметки, напоминания, фото, подключения и профиль. Сначала выгрузите заметки. Подписка отменится, за неиспользованные дни вернём деньги по запросу. Вход блокируется сразу, 7 дней можно передумать, потом данные стираются (из резервных копий - не позже 30 дней). Остаются только чеки об оплате - их требует налоговый учёт.</p><div style="display:flex;gap:8px"><button class="btn" style="flex:1" id="dlExp">Выгрузить</button><button class="btn" style="flex:1;background:var(--danger);color:#fff" id="dlGo">Удалить</button></div>`);setTimeout(()=>{const g=$("#dlGo");if(g)g.onclick=()=>{closeSheet();toast("Аккаунт удаляется. 7 дней можно восстановить")};const e=$("#dlExp");if(e)e.onclick=()=>toast("Архив готовится")},50)};
+});
 </script>
 </body>
 </html>
