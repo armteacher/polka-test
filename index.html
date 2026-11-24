@@ -1285,6 +1285,14 @@ let PLANFIX=false;
 const PHOTO=`<svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="300" fill="#bfb7a6"/><rect x="0" y="230" width="400" height="70" fill="#a99f8c"/><g transform="rotate(-4 200 150)"><rect x="92" y="38" width="216" height="214" fill="#ffe680"/><rect x="92" y="38" width="216" height="16" fill="#f5d84f"/><g font-family="'Comic Sans MS','Segoe Print','Bradley Hand',cursive" fill="#2d2a8a" font-size="20"><text x="108" y="84" font-weight="700">ОТПУСК!</text><text x="108" y="120">- билеты до 1.12 !!</text><text x="108" y="152">- виза?</text><text x="108" y="184">- собаку → к маме</text><text x="108" y="216">- страховка</text></g></g></svg>`;
 
 /* ---------- экраны-макеты ---------- */
+const BTN=(id,bg,fg,t)=>`<div id="${id}" style="height:44px;border-radius:12px;background:${bg};color:${fg};display:flex;align-items:center;justify-content:center;font-weight:700;margin:8px 0;font-size:14px">${t}</div>`;
+const CK=(on,t)=>`<div style="display:flex;gap:8px;align-items:flex-start;font-size:12.5px;margin:8px 0"><span style="flex:none;width:18px;height:18px;border-radius:5px;border:1.5px solid var(--accent);background:${on?"var(--accent)":"transparent"};color:#0f1330;font-size:12px;display:grid;place-items:center">${on?"✓":""}</span><span>${t}</span></div>`;
+const LOGIN=(on)=>`${TOP("Вход","","")}<div class="m-body" style="padding:14px"><div style="text-align:center;margin:6px 0 12px"><span class="mk">${MUR}</span><div style="font-weight:700;font-size:17px;margin-top:6px">Полочки</div><small style="color:var(--muted)">Войдите, чтобы заметки были на всех устройствах</small></div>${CK(on,"Принимаю <u>пользовательское соглашение и оферту</u>")}${CK(on,"Даю <u>согласие на обработку персональных данных</u>")}<div id="ckBox" style="font-size:11px;color:var(--muted);margin:-2px 0 6px 26px">${on?"":"Галочки не стоят заранее - так требует закон"}</div>${BTN("yaBtn","#fc3f1d","#fff","Войти с Яндекс ID")}${BTN("vkBtn","#0077ff","#fff","Войти с VK ID (и Max)")}${BTN("phBtn","var(--s2,#2a2a28)","var(--ink)","📱 По номеру +7")}<small style="display:block;color:var(--muted);font-size:11px;margin-top:6px">Вход через Google, Apple и Telegram в России запрещён законом (406-ФЗ), поэтому его нет</small></div>`;
+const RECOV=()=>`${TOP("Код восстановления","","")}<div class="m-body" style="padding:14px"><small style="color:var(--muted)">Это ключ к зашифрованным заметкам. Без него прочитать их не сможет никто, даже мы.</small><div style="margin:12px 0;padding:12px;border:1px solid var(--line);border-radius:12px;font-family:ui-monospace,monospace;font-size:13px;line-height:1.8">полка · мураш · клён · ветер<br>сахар · окно · берег · лампа<br>сова · кедр · пирог · море</div>${CK(true,"Я сохранил код в надёжном месте")}${BTN("recOk","var(--accent)","#0f1330","Готово")}</div>`;
+const ROW=(t,sub,id,c)=>`<div ${id?`id="${id}"`:""} style="display:flex;justify-content:space-between;align-items:center;padding:12px 2px;border-bottom:1px solid var(--line)"><div style="${c?`color:${c}`:""}">${t}<small style="display:block;color:var(--muted);font-size:11.5px">${sub}</small></div><span style="color:var(--muted)">›</span></div>`;
+const SETT=()=>`${TOP("Настройки","‹","")}<div class="m-body" style="padding:6px 14px">${ROW("Подписка","Оптимальный · автопродление можно отключить в 1 нажатие")}${ROW("Аккаунт","Вход: Яндекс ID · телефон +7")}${ROW("Подключения","Telegram-бот подключается после входа, кодом")}${ROW("Выгрузить все заметки","Markdown и JSON одним архивом")}${ROW("Удалить аккаунт","Все данные стираются не позже 30 дней","delRow","#e5534b")}</div>`;
+const DELS=()=>`${TOP("Удалить аккаунт","‹","")}<div class="m-body" style="padding:14px;font-size:13px"><div style="border:1px solid #e5534b;border-radius:12px;padding:10px 12px;margin-bottom:10px"><b>Удалится навсегда:</b> заметки, напоминания, фото, голосовые, подключения, профиль</div><div style="border:1px solid #e0a13a;border-radius:12px;padding:10px 12px;margin-bottom:10px">💾 Сначала предложим выгрузить заметки<br>💳 Подписка отменится, за неиспользованные дни вернём деньги по запросу</div><small style="color:var(--muted)">Вход блокируется сразу. 7 дней можно передумать, потом данные стираются (из резервных копий - не позже 30 дней). Остаются только чеки - их требует налоговый учёт.</small>${BTN("delOk","#e5534b","#fff","Удалить (подтвердить словом «УДАЛИТЬ»)")}</div>`;
+
 const dotp=p=>p?`<span class="dot" style="background:${PJ[p][1]}"></span>${PJ[p][0]}`:"Свободные";
 const L=(t,cls="")=>`<li class="${cls}"><span class="cb"></span><span>${t}</span>${cls.includes("new")?'<span class="tag">НОВОЕ</span>':""}</li>`;
 const MR=(when,t)=>`<div class="m-rem">⏰ <span><b>${when}</b> · ${t}</span></div>`;
@@ -1405,7 +1413,19 @@ const SC=[
   {s:CATNOTE,end:true,hint:"Готово: запись разобрана, как только появилась сеть"}],
  raw:()=>OFFLIST(false),
  what:["Без сети запись сохранилась на телефоне, ничего не потерялось","Как только появилась сеть, разложил её по полочкам","Заметки шифруются: прочитать их можете только вы"],
- after(){addNote(2,"Кот","- [ ] Купить корм\n- [ ] Купить наполнитель\n- [ ] Записаться к ветеринару на прививку",T8,"Записано без сети")}}
+ after(){addNote(2,"Кот","- [ ] Купить корм\n- [ ] Купить наполнитель\n- [ ] Записаться к ветеринару на прививку",T8,"Записано без сети")}},
+{id:"account",em:"🔐",title:"Вход, подписка и удаление",stat:"Вход по закону · данные можно забрать и удалить",
+ sit:"Важно понимать, кто видит данные и можно ли уйти из сервиса со своими заметками.",
+ tz:"Вход только через российские сервисы: Яндекс ID, VK ID (Max), телефон +7. Две отдельные галочки: соглашение и согласие на данные. Автопродление подписки - только отдельной галочкой при оплате, отмена в одно нажатие.",
+ steps:[{s:()=>LOGIN(false),tap:"#ckBox",hint:"Сначала отметьте обе галочки"},
+  {s:()=>LOGIN(true),tap:"#yaBtn",hint:"Нажмите «Войти с Яндекс ID»"},
+  {proc:["Яндекс подтверждает вход","Создаю ключ шифрования на телефоне"]},
+  {s:RECOV,tap:"#recOk",hint:"Код восстановления сохранён. Нажмите «Готово»"},
+  {s:SETT,tap:"#delRow",hint:"В настройках есть «Удалить аккаунт». Нажмите"},
+  {s:DELS,end:true,hint:"Удаление - без писем в поддержку, данные стираются полностью"}],
+ raw:()=>LOGIN(false),
+ what:["Вход без Google и Telegram: только Яндекс ID, VK ID или номер +7","Заметки шифруются ключом на вашем телефоне, код восстановления - у вас","Выгрузить заметки и удалить аккаунт можно самому в настройках"],
+ after(){}}
 ];
 const ST={i:0,phase:"preview",view:"after",menu:false};
 function addNote(proj,title,md,raw,src){if(S.notes.some(n=>n.title===title))return;S.notes.unshift({id:S.nextId++,proj,title,date:"только что",src,photos:[],md,raw})}
